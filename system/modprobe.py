@@ -26,7 +26,7 @@ short_description: Add or remove kernel modules
 requirements: []
 version_added: 1.4
 author:
-    - "David Stygstra (@stygstra)" 
+    - "David Stygstra (@stygstra)"
     - "Julien Dauphant"
     - "Matt Jeffery"
 description:
@@ -52,9 +52,15 @@ options:
 
 EXAMPLES = '''
 # Add the 802.1q module
-- modprobe: name=8021q state=present
+- modprobe:
+    name: 8021q
+    state: present
+
 # Add the dummy module
-- modprobe: name=dummy state=present params="numdummies=2"
+- modprobe:
+    name: dummy
+    state: present
+    params: "numdummies=2"
 '''
 
 from ansible.module_utils.basic import *

@@ -45,7 +45,7 @@ options:
     url:
         description:
             - Set exact URL to download the plugin from.
-              For local file, prefix its absolute path with file:// 
+              For local file, prefix its absolute path with file://
         required: False
         default: None
     timeout:
@@ -79,13 +79,20 @@ options:
 
 EXAMPLES = '''
 # Install Elasticsearch head plugin
-- kibana_plugin: state=present name="elasticsearch/marvel"
+- kibana_plugin:
+    state: present
+    name: "elasticsearch/marvel"
 
 # Install specific version of a plugin
-- kibana_plugin: state=present name="elasticsearch/marvel" version="2.3.3"
+- kibana_plugin:
+    state: present
+    name: "elasticsearch/marvel"
+    version: "2.3.3"
 
 # Uninstall Elasticsearch head plugin
-- kibana_plugin: state=absent name="elasticsearch/marvel"
+- kibana_plugin:
+    state: absent
+    name: "elasticsearch/marvel"
 '''
 
 RETURN = '''
@@ -170,7 +177,7 @@ def install_plugin(module, plugin_bin, plugin_name, url, timeout):
     if rc != 0:
         reason = parse_error(out)
         module.fail_json(msg=reason)
-    
+
     return True, cmd, out, err
 
 def remove_plugin(module, plugin_bin, plugin_name):
@@ -180,12 +187,12 @@ def remove_plugin(module, plugin_bin, plugin_name):
 
     if module.check_mode:
         return True, cmd, "check mode", ""
-        
+
     rc, out, err = module.run_command(cmd)
     if rc != 0:
         reason = parse_error(out)
         module.fail_json(msg=reason)
-    
+
     return True, cmd, out, err
 
 def main():

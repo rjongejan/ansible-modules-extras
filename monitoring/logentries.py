@@ -48,8 +48,14 @@ notes:
     - Requires the LogEntries agent which can be installed following the instructions at logentries.com
 '''
 EXAMPLES = '''
-- logentries: path=/var/log/nginx/access.log state=present name=nginx-access-log
-- logentries: path=/var/log/nginx/error.log state=absent
+- logentries:
+    path: /var/log/nginx/access.log
+    state: present
+    name: nginx-access-log
+
+- logentries:
+    path: /var/log/nginx/error.log
+    state: absent
 '''
 
 def query_log_status(module, le_path, path, state="present"):

@@ -70,7 +70,9 @@ author: "Daniel Schep (@dschep)"
 
 EXAMPLES = '''
 # Adds postgis to the database "acme"
-- postgresql_ext: name=postgis db=acme
+- postgresql_ext:
+    name: postgis
+    db: acme
 '''
 
 try:
@@ -137,7 +139,7 @@ def main():
     state = module.params["state"]
     changed = False
 
-    # To use defaults values, keyword arguments must be absent, so 
+    # To use defaults values, keyword arguments must be absent, so
     # check which values are empty and don't include in the **kw
     # dictionary
     params_map = {
@@ -146,7 +148,7 @@ def main():
         "login_password":"password",
         "port":"port"
     }
-    kw = dict( (params_map[k], v) for (k, v) in module.params.iteritems() 
+    kw = dict( (params_map[k], v) for (k, v) in module.params.iteritems()
               if k in params_map and v != '' )
     try:
         db_connection = psycopg2.connect(database=db, **kw)
@@ -172,7 +174,7 @@ def main():
         else:
             if state == "absent":
                 changed = ext_delete(cursor, ext)
-    
+
             elif state == "present":
                 changed = ext_create(cursor, ext)
     except NotSupportedError:
@@ -188,4 +190,3 @@ def main():
 from ansible.module_utils.basic import *
 from ansible.module_utils.pycompat24 import get_exception
 main()
-

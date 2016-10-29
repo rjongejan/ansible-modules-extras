@@ -105,40 +105,68 @@ author: "Steve Smith (@tarka)"
 EXAMPLES = """
 # Create a new issue and add a comment to it:
 - name: Create an issue
-  jira: uri={{server}} username={{user}} password={{pass}}
-        project=ANS operation=create
-        summary="Example Issue" description="Created using Ansible" issuetype=Task
+  jira:
+    uri: "{{ server }}"
+    username: "{{ user }}"
+    password: {{ pass }}
+    project: ANS
+    operation: create
+    summary: "Example Issue"
+    description: "Created using Ansible"
+    issuetype: Task
   register: issue
 
 - name: Comment on issue
-  jira: uri={{server}} username={{user}} password={{pass}}
-        issue={{issue.meta.key}} operation=comment 
-        comment="A comment added by Ansible"
+  jira:
+    uri: "{{ server }}"
+    username: "{{ user }}"
+    password: "{{ pass }}"
+    issue: "{{ issue.meta.key }}"
+    operation: comment
+    comment: "A comment added by Ansible"
 
 # Assign an existing issue using edit
 - name: Assign an issue using free-form fields
-  jira: uri={{server}} username={{user}} password={{pass}}
-        issue={{issue.meta.key}} operation=edit
-        assignee=ssmith
+  jira:
+    uri: "{{ server }}"
+    username: "{{ user }}"
+    password: "{{ pass }}"
+    issue: "{{ issue.meta.key }}"
+    operation: edit
+    assignee: ssmith
 
 # Create an issue with an existing assignee
 - name: Create an assigned issue
-  jira: uri={{server}} username={{user}} password={{pass}}
-        project=ANS operation=create
-        summary="Assigned issue" description="Created and assigned using Ansible" 
-        issuetype=Task assignee=ssmith
+  jira:
+    uri: "{{ server }}"
+    username: "{{ user }}"
+    password: "{{ pass }}"
+    project: ANS
+    operation: create
+    summary: "Assigned issue"
+    description: "Created and assigned using Ansible"
+    issuetype: Task
+    assignee: ssmith
 
 # Edit an issue using free-form fields
 - name: Set the labels on an issue using free-form fields
-  jira: uri={{server}} username={{user}} password={{pass}}
-        issue={{issue.meta.key}} operation=edit 
+  jira:
+    uri: "{{ server }}"
+    username: "{{ user }}"
+    password: "{{ pass }}"
+    issue: "{{ issue.meta.key }}"
+    operation: edit
   args: { fields: {labels: ["autocreated", "ansible"]}}
 
 - name: Set the labels on an issue, YAML version
-  jira: uri={{server}} username={{user}} password={{pass}}
-        issue={{issue.meta.key}} operation=edit 
-  args: 
-    fields: 
+  jira:
+    uri: "{{ server }}"
+    username: "{{ user }}"
+    password: "{{ pass }}"
+    issue: "{{ issue.meta.key }}"
+    operation: edit
+  args:
+    fields:
       labels:
         - "autocreated"
         - "ansible"
@@ -146,18 +174,30 @@ EXAMPLES = """
 
 # Retrieve metadata for an issue and use it to create an account
 - name: Get an issue
-  jira: uri={{server}} username={{user}} password={{pass}}
-        project=ANS operation=fetch issue="ANS-63"
+  jira:
+    uri: "{{ server }}"
+    username: "{{ user }}"
+    password: "{{ pass }}"
+    project: ANS
+    operation: fetch
+    issue: "ANS-63"
   register: issue
 
 - name: Create a unix account for the reporter
   sudo: true
-  user: name="{{issue.meta.fields.creator.name}}" comment="{{issue.meta.fields.creator.displayName}}"
+  user:
+    name: "{{ issue.meta.fields.creator.name }}"
+    comment: "{{ issue.meta.fields.creator.displayName }}"
 
 # Transition an issue by target status
 - name: Close the issue
-  jira: uri={{server}} username={{user}} password={{pass}}
-        issue={{issue.meta.key}} operation=transition status="Done"
+  jira:
+    uri: "{{ server }}"
+    username: "{{ user }}"
+    password: "{{ pass }}"
+    issue: "{{ issue.meta.key }}"
+    operation: transition
+    status: "Done"
 """
 
 try:
@@ -187,7 +227,7 @@ def request(url, user, passwd, data=None, method=None):
     # inject the basic-auth header up-front to ensure that JIRA treats
     # the requests as authorized for this user.
     auth = base64.encodestring('%s:%s' % (user, passwd)).replace('\n', '')
-    response, info = fetch_url(module, url, data=data, method=method, 
+    response, info = fetch_url(module, url, data=data, method=method,
                                headers={'Content-Type':'application/json',
                                         'Authorization':"Basic %s" % auth})
 
@@ -226,7 +266,7 @@ def create(restbase, user, passwd, params):
 
     url = restbase + '/issue/'
 
-    ret = post(url, user, passwd, data) 
+    ret = post(url, user, passwd, data)
 
     return ret
 
@@ -248,16 +288,16 @@ def edit(restbase, user, passwd, params):
         'fields': params['fields']
         }
 
-    url = restbase + '/issue/' + params['issue']    
+    url = restbase + '/issue/' + params['issue']
 
-    ret = put(url, user, passwd, data) 
+    ret = put(url, user, passwd, data)
 
     return ret
 
 
 def fetch(restbase, user, passwd, params):
     url = restbase + '/issue/' + params['issue']
-    ret = get(url, user, passwd) 
+    ret = get(url, user, passwd)
     return ret
 
 
@@ -339,7 +379,7 @@ def main():
 
     # Dispatch
     try:
-        
+
         # Lookup the corresponding method for this operation. This is
         # safe as the AnsibleModule should remove any unknown operations.
         thismod = sys.modules[__name__]

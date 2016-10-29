@@ -76,15 +76,24 @@ notes:
 requirements:
    - python >= 2.7
    - pymssql
-author: Vedit Firat Arig 
+author: Vedit Firat Arig
 '''
 
 EXAMPLES = '''
 # Create a new database with name 'jackdata'
-- mssql_db: name=jackdata state=present
+- mssql_db:
+    name: jackdata
+    state: present
+
 # Copy database dump file to remote host and restore it to database 'my_db'
-- copy: src=dump.sql dest=/tmp
-- mssql_db: name=my_db state=import target=/tmp/dump.sql
+- copy:
+    src: dump.sql
+    dest: /tmp
+
+- mssql_db:
+    name: my_db
+    state: import
+    target: /tmp/dump.sql
 '''
 
 RETURN  = '''
@@ -168,7 +177,7 @@ def main():
     login_password = module.params['login_password']
     login_host = module.params['login_host']
     login_port = module.params['login_port']
-    
+
     login_querystring = login_host
     if login_port != "1433":
         login_querystring = "%s:%s" % (login_host, login_port)
@@ -229,4 +238,3 @@ def main():
 from ansible.module_utils.basic import *
 if __name__ == '__main__':
     main()
-

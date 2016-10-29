@@ -83,13 +83,20 @@ options:
 
 EXAMPLES = '''
 # Install Elasticsearch head plugin
-- elasticsearch_plugin: state=present name="mobz/elasticsearch-head"
+- elasticsearch_plugin:
+    state: present
+    name: "mobz/elasticsearch-head"
 
 # Install specific version of a plugin
-- elasticsearch_plugin: state=present name="com.github.kzwang/elasticsearch-image" version="1.2.0"
+- elasticsearch_plugin:
+    state: present
+    name: "com.github.kzwang/elasticsearch-image"
+    version: "1.2.0"
 
 # Uninstall Elasticsearch head plugin
-- elasticsearch_plugin: state=absent name="mobz/elasticsearch-head"
+- elasticsearch_plugin:
+    state: absent
+    name: "mobz/elasticsearch-head"
 '''
 
 PACKAGE_STATE_MAP = dict(
@@ -150,7 +157,7 @@ def install_plugin(module, plugin_bin, plugin_name, version, url, proxy_host, pr
     if rc != 0:
         reason = parse_error(out)
         module.fail_json(msg=reason)
-    
+
     return True, cmd, out, err
 
 def remove_plugin(module, plugin_bin, plugin_name):
@@ -166,7 +173,7 @@ def remove_plugin(module, plugin_bin, plugin_name):
     if rc != 0:
         reason = parse_error(out)
         module.fail_json(msg=reason)
-    
+
     return True, cmd, out, err
 
 def main():

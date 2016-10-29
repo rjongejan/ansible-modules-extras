@@ -281,7 +281,9 @@ tenant_ip: "203.0.113.77/23"
   tasks:
 
 - name: install needed network manager libs
-  yum: name={{ item }} state=installed
+  yum:
+    name: "{{ item }}"
+    state: installed
   with_items:
     - NetworkManager-glib
     - libnm-qt-devel.x86_64
@@ -291,31 +293,57 @@ tenant_ip: "203.0.113.77/23"
 
 ##### Working with all cloud nodes - Teaming
   - name: try nmcli add team - conn_name only & ip4 gw4
-    nmcli: type=team conn_name={{item.conn_name}} ip4={{item.ip4}} gw4={{item.gw4}} state=present
+    nmcli:
+      type: team
+      conn_name: "{{ item.conn_name }}"
+      ip4: "{{ item.ip4 }}"
+      gw4: "{{ item.gw4 }}"
+      state: present
     with_items:
-      - "{{nmcli_team}}"
+      - "{{ nmcli_team }}"
 
   - name: try nmcli add teams-slave
-    nmcli: type=team-slave conn_name={{item.conn_name}} ifname={{item.ifname}} master={{item.master}} state=present
+    nmcli:
+      type: team-slave
+      conn_name: "{{ item.conn_name }}"
+      ifname: "{{ item.ifname }}"
+      master: "{{ item.master }}"
+      state: present
     with_items:
-      - "{{nmcli_team_slave}}"
+      - "{{ nmcli_team_slave }}"
 
 ###### Working with all cloud nodes - Bonding
 #  - name: try nmcli add bond - conn_name only & ip4 gw4 mode
-#    nmcli: type=bond conn_name={{item.conn_name}} ip4={{item.ip4}} gw4={{item.gw4}} mode={{item.mode}} state=present
+#    nmcli:
+#      type: bond
+#      conn_name: "{{ item.conn_name }}"
+#      ip4: "{{ item.ip4 }}"
+#      gw4: "{{ item.gw4 }}"
+#      mode: "{{ item.mode }}"
+#      state: present
 #    with_items:
-#      - "{{nmcli_bond}}"
+#      - "{{ nmcli_bond }}"
 #
 #  - name: try nmcli add bond-slave
-#    nmcli: type=bond-slave conn_name={{item.conn_name}} ifname={{item.ifname}} master={{item.master}} state=present
+#    nmcli:
+#      type: bond-slave
+#      conn_name: "{{ item.conn_name }}"
+#      ifname: "{{ item.ifname }}"
+#      master: "{{ item.master }}"
+#      state: present
 #    with_items:
-#      - "{{nmcli_bond_slave}}"
+#      - "{{ nmcli_bond_slave }}"
 
 ##### Working with all cloud nodes - Ethernet
 #  - name: nmcli add Ethernet - conn_name only & ip4 gw4
-#    nmcli: type=ethernet conn_name={{item.conn_name}} ip4={{item.ip4}} gw4={{item.gw4}} state=present
+#    nmcli:
+#      type: ethernet
+#      conn_name: "{{ item.conn_name }}"
+#      ip4: "{{ item.ip4 }}"
+#      gw4: "{{ item.gw4 }}"
+#      state: present
 #    with_items:
-#      - "{{nmcli_ethernet}}"
+#      - "{{ nmcli_ethernet }}"
 ```
 
 ## playbook-del.yml example
@@ -327,7 +355,9 @@ tenant_ip: "203.0.113.77/23"
   tasks:
 
   - name: try nmcli del team - multiple
-    nmcli: conn_name={{item.conn_name}} state=absent
+    nmcli:
+      conn_name: "{{ item.conn_name }}"
+      state: absent
     with_items:
       - { conn_name: 'em1'}
       - { conn_name: 'em2'}
@@ -346,22 +376,54 @@ tenant_ip: "203.0.113.77/23"
       - { conn_name: 'team-p2p2'}
 ```
 # To add an Ethernet connection with static IP configuration, issue a command as follows
-- nmcli: conn_name=my-eth1 ifname=eth1 type=ethernet ip4=192.0.2.100/24 gw4=192.0.2.1 state=present
+- nmcli:
+    conn_name: my-eth1
+    ifname: eth1
+    type: ethernet
+    ip4: 192.0.2.100/24
+    gw4: 192.0.2.1
+    state: present
 
 # To add an Team connection with static IP configuration, issue a command as follows
-- nmcli: conn_name=my-team1 ifname=my-team1 type=team ip4=192.0.2.100/24 gw4=192.0.2.1 state=present autoconnect=yes
+- nmcli:
+    conn_name: my-team1
+    ifname: my-team1
+    type: team
+    ip4: 192.0.2.100/24
+    gw4: 192.0.2.1
+    state: present
+    autoconnect: yes
 
 # Optionally, at the same time specify IPv6 addresses for the device as follows:
-- nmcli: conn_name=my-eth1 ifname=eth1 type=ethernet ip4=192.0.2.100/24 gw4=192.0.2.1 ip6=2001:db8::cafe gw6=2001:db8::1 state=present
+- nmcli:
+    conn_name: my-eth1
+    ifname: eth1
+    type: ethernet
+    ip4: 192.0.2.100/24
+    gw4: 192.0.2.1
+    ip6: '2001:db8::cafe'
+    gw6: '2001:db8::1'
+    state: present
 
 # To add two IPv4 DNS server addresses:
--nmcli: conn_name=my-eth1 dns4=["192.0.2.53", "198.51.100.53"] state=present
+- nmcli:
+    conn_name: my-eth1
+    dns4: ["192.0.2.53", "198.51.100.53"]
+    state: present
 
 # To make a profile usable for all compatible Ethernet interfaces, issue a command as follows
-- nmcli: ctype=ethernet name=my-eth1 ifname="*" state=present
+- nmcli:
+    ctype: ethernet
+    name: my-eth1
+    ifname: "*"
+    state: present
 
 # To change the property of a setting e.g. MTU, issue a command as follows:
-- nmcli: conn_name=my-eth1 mtu=9000 type=ethernet state=present
+- nmcli:
+    conn_name: my-eth1
+    mtu: 9000
+    type: ethernet
+    state: present
 
     Exit Status's:
         - nmcli exits with status 0 if it succeeds, a value greater than 0 is

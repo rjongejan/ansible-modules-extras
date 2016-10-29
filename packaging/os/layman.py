@@ -64,19 +64,29 @@ options:
 
 EXAMPLES = '''
 # Install the overlay 'mozilla' which is on the central overlays list.
-- layman: name=mozilla
+- layman:
+    name: mozilla
 
 # Install the overlay 'cvut' from the specified alternative list.
-- layman: name=cvut list_url=http://raw.github.com/cvut/gentoo-overlay/master/overlay.xml
+- layman:
+    name: cvut
+    list_url: http://raw.github.com/cvut/gentoo-overlay/master/overlay.xml
 
 # Update (sync) the overlay 'cvut', or install if not installed yet.
-- layman: name=cvut list_url=http://raw.github.com/cvut/gentoo-overlay/master/overlay.xml state=updated
+- layman:
+    name: cvut
+    list_url: http://raw.github.com/cvut/gentoo-overlay/master/overlay.xml
+    state: updated
 
 # Update (sync) all of the installed overlays.
-- layman: name=ALL state=updated
+- layman:
+    name: ALL
+    state: updated
 
 # Uninstall the overlay 'cvut'.
-- layman: name=cvut state=absent
+- layman:
+    name: cvut
+    state: absent
 '''
 
 USERAGENT = 'ansible-httpget'
@@ -143,8 +153,8 @@ def install_overlay(module, name, list_url=None):
     layman = init_layman(layman_conf)
 
     if layman.is_installed(name):
-        return False    
-    
+        return False
+
     if module.check_mode:
         mymsg = 'Would add layman repo \'' + name + '\''
         module.exit_json(changed=True, msg=mymsg)
@@ -181,7 +191,7 @@ def uninstall_overlay(module, name):
 
     if not layman.is_installed(name):
         return False
-    
+
     if module.check_mode:
         mymsg = 'Would remove layman repo \'' + name + '\''
         module.exit_json(changed=True, msg=mymsg)

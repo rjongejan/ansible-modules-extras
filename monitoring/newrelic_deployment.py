@@ -76,10 +76,11 @@ requirements: []
 '''
 
 EXAMPLES = '''
-- newrelic_deployment: token=AAAAAA
-                       app_name=myapp
-                       user='ansible deployment'
-                       revision=1.0
+- newrelic_deployment:
+    token: AAAAAA
+    app_name: myapp
+    user: 'ansible deployment'
+    revision: 1.0
 '''
 
 import urllib
@@ -118,7 +119,7 @@ def main():
         params["application_id"] = module.params["application_id"]
     else:
         module.fail_json(msg="you must set one of 'app_name' or 'application_id'")
-    
+
     for item in [ "changelog", "description", "revision", "user", "appname", "environment" ]:
         if module.params[item]:
             params[item] = module.params[item]
@@ -144,4 +145,3 @@ from ansible.module_utils.basic import *
 from ansible.module_utils.urls import *
 
 main()
-

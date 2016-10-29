@@ -80,10 +80,16 @@ author: "Dariusz Owczarek (@dareko)"
 
 EXAMPLES = """
 - name: creating a new vertica role
-  vertica_role: name=role_name db=db_name state=present
+  vertica_role:
+    name: role_name
+    db: db_name
+    state: present
 
 - name: creating a new vertica role with other role assigned
-  vertica_role: name=role_name assigned_role=other_role_name state=present
+  vertica_role:
+    name: role_name
+    assigned_role: other_role_name
+    state: present
 """
 
 try:
@@ -131,7 +137,7 @@ def update_roles(role_facts, cursor, role,
         cursor.execute("revoke {0} from {1}".format(assigned_role, role))
     for assigned_role in set(required) - set(existing):
         cursor.execute("grant {0} to {1}".format(assigned_role, role))
-        
+
 def check(role_facts, role, assigned_roles):
     role_key = role.lower()
     if role_key not in role_facts:
